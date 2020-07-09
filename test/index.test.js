@@ -45,7 +45,7 @@ describe('Index file tests', () => {
     });
 
     describe('getColumnWidths', () => {
-        mockArray = [
+       const mockArray = [
             ['items', 'prices', 'animal', 'cars', 'flabbergasters'],
             [3, '$2343.00', 'giraffe', 'Audi', 'Justin Flabber'],
             [13, '$12.50', 'Rhinoceros', 'Lamborghini', 'John']

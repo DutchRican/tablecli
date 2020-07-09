@@ -1,0 +1,28 @@
+{
+    "default": {
+        "topLeft": "┌",
+        "horizontal": "─",
+        "topRight": "┐",
+        "vertical": "│",
+        "bottomRight": "┘",
+        "bottomLeft": "└",
+        "midLeft": "├",
+        "middleFourWay": "┼",
+        "bottomMiddle": "┴",
+        "topMiddle": "┬",
+        "midRight": "┤"
+    },
+    "double" : {
+        "topLeft": "╔",
+        "horizontal": "═",
+        "topRight": "╗",
+        "vertical": "║",
+        "bottomRight": "╝",
+        "bottomLeft": "╚",
+        "midLeft":"╠",
+        "middleFourWay":"╬",
+        "bottomMiddle": "╩",
+        "topMiddle": "╦",
+        "midRight": "╣"		
+    }
+}
