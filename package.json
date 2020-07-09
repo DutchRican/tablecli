@@ -1,0 +1,21 @@
+{
+  "name": "tablecli",
+  "version": "1.0.0",
+  "description": "Simple table output for arrays and objects on the cli",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "cli",
+    "table",
+    "output"
+  ],
+  "author": "Paul van Woensel",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^8.0.1",
+    "rewire": "^5.0.0"
+  }
+}
