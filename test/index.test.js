@@ -1,10 +1,12 @@
 const assert = require('assert');
 const rewire = require('rewire');
+const { TableCli } = require('..');
 
 const main = rewire('../index.js');
 
 objectToArray = main.__get__('objectToArray');
 getColumnWidths = main.__get__('getColumnWidths');
+base_options = main.__get__('base_options');
 
 describe('Index file tests', () => {
     describe('objectToArray', () => {
@@ -59,6 +61,35 @@ describe('Index file tests', () => {
             const res = getColumnWidths(mockArray);
 
             assert.deepEqual(res, [5,8,10,11,14]);
+        });
+    });
+    describe('Table', () => {
+        it('should create a Table object with default options', () => {
+            const table = new TableCli();
+
+            assert.deepEqual(table.opts, base_options);
+        });
+
+        it('should not allow a padding less than 2', () => {
+            const table = new TableCli({}, {padding: 0});
+            assert.deepEqual(table.opts, base_options);
+        });
+
+        it('should accept options', () => {
+            const opts = {padding: 5, align: 'left', borderType: 'double'};
+            const table = new TableCli(opts);
+            assert.deepEqual(table.opts, {...base_options, ...opts});
+        });
+
+        it('should accept valid data', () => {
+            const table = new TableCli();
+            const testArray = [1,23,4];
+            const testObject = {test: testArray}
+            table.setData(testArray);
+            assert.equal(table._data, testArray);
+
+            table.setData({test: [1,23,4]});
+            assert.deepEqual(table._data, testObject)
         });
     });
 });

@@ -1,25 +1,67 @@
 const { prepareTable } = require('./table');
 
+/** {{message: string}}
+ * @type {{ padding: number, borderType: 'default|double', align: 'left|center
+ * right', headers: 'array overriding object keys', columnInformation: 'not used yet'}}
+ */
 const base_options = {
 	padding: 2,
 	borderType: 'default',
 	align: 'center',
+	headers: undefined,
 	columnInformation: undefined
 }
+
 /**
  * 
- * @param {object|Array} [data] - Either an object or array to display
  * @param {base_options} [options] 
  */
-function TableCli(data = {}, options = {}) {
+class TableCli {
+	constructor(options = {}) {
 	this.opts = Object.assign(base_options, options);
-	this.data = data;
+	this._data = null;
+	this._dataBuffer = [];
 
 	// making sure it won't look completely weird
 	if (this.opts.padding < 2) this.opts.padding = 2;
+	}
+
+	setData(data) {
+		this._data = data;
+	}
+	
+	addRow(row) {
+		if (!Array.isArray(row)) throw new Error('row needs to be of type array!');
+		this._dataBuffer.push(row);
+	}
+	
+	/**
+	 * Prints out the table as returned by this.getTableString
+	 */
+	showTable() {
+		const table = this.getTableString();
+		console.log(table);
+	}
+	
+	/**
+	 * Returns the table as a string for further manipulation.
+	 */
+	getTableString() {
+		let dataArray;
+		if (!Array.isArray(this._data)) {
+			dataArray = objectToArray(this._data);
+		}
+		const colWidths = getColumnWidths(dataArray || this._data);
+		try {
+			const table = prepareTable(dataArray || this._data, colWidths, this.opts, this._dataBuffer);
+			return table;
+		} catch (err) {
+			return err.message;
+		}
+	}
 }
 
-function objectToArray(obj = {}) {
+function objectToArray(obj) {
 	if (!obj || !Object.keys(obj).length) return [];
 	const items = Object.entries(obj).reduce((acc, curr) => {
 		acc.headers.push(curr[0]);
@@ -44,10 +86,11 @@ function objectToArray(obj = {}) {
 function getColumnWidths(array = []) {
 	const colWidths = array.reduce((acc, curr) => {
 		curr.forEach((group, index) => {
+			const groupLen = group.toString().length;
 			if (!acc[index]) {
-				acc.push(group.toString().length);
+				acc.push(groupLen);
 			} else {
-				acc[index] = acc[index] > group.toString().length ? acc[index] : group.toString().length;
+				acc[index] = acc[index] > groupLen ? acc[index] : groupLen;
 			}
 		});
 		return acc;
@@ -56,44 +99,24 @@ function getColumnWidths(array = []) {
 }
 
 
-const mockArray = [
-	['items', 'prices', 'animal', 'cars', 'flabbergasters'],
-	[3, '$2343.00', 'giraffe', 'Audi', 'Justin Flabber'],
-	[13, '$12.50', 'Rhinoceros', 'Lamborghini', 'John']
-];
 
-const mockObject = {
-	items: [3, 13,34],
-	prices: ['$2343.00', '$12.50', '$234'],
-	animal: ['giraffe', 'Rhinoceros', 'ape'],
-	cars: ['Audi', 'Lamborghini'],
-	flabbergasters: ['Justin Flabber', 'John', 'Henry']
-}
+module.exports.TableCli = TableCli;
 
-/**
- * Prints out the table as returned by this.getTableString
- */
-TableCli.prototype.showTable = function () {
-	const table = this.getTableString();
-	console.log(table);
-}
+// const mockArray = [
+// 	['items', 'prices', 'animal', 'cars', 'flabbergasters'],
+// 	[3, '$2343.00', 'giraffe', 'Audi', 'Justin Flabber'],
+// 	[13, '$12.50', 'Rhinoceros', 'Lamborghini', 'John']
+// ];
 
-/**
- * Returns the table as a string for further manipulation.
- */
-TableCli.prototype.getTableString = function () {
-	let dataArray;
-	if (!Array.isArray(this.data)) {
-		dataArray = objectToArray(this.data);
-	}
-	const colWidths = getColumnWidths(dataArray || this.data);
-	try {
-		const table = prepareTable(dataArray || this.data, colWidths, this.opts );
-		return table;
-	} catch (err) {
-		return err.message;
-	}
-}
-
-const Table = new TableCli(mockObject, {align: 'center', padding: 2, borderType: 'double'});
-Table.showTable();
+// const mockObject = {
+// 	items: [3, 13, 34],
+// 	prices: ['$2343.00', '$12.50', '$234'],
+// 	animal: ['giraffe', 'Rhinoceros', 'ape'],
+// 	cars: ['Audi', 'Lamborghini'],
+// 	flabbergasters: ['Justin Flabber', 'John', 'Henry']
+// }
+// const Table = new TableCli({ align: 'right', padding: 10, borderType: 'double', headers: ['one', 'too'] });
+// Table.setData(mockArray)
+// Table.addRow([55,'$23432', 'Siverback', 'Ford', 'Oscar', 'too many!']);
+// Table.addRow([1,'$.22', 'Hedgehog', 'Buick']);
+// Table.showTable();

@@ -1,9 +1,10 @@
+const { isArray } = require('util');
 const borders = require('./borders.json');
 
 function createTableHeader(headers, colWidths, padding, border) {
 
     const headerTop = createGroupHeaderTop(colWidths, padding, border, true);
-    const columnHeads = createDataRow([headers], colWidths, padding, border, 'center');
+    const columnHeads = createDataRows([headers], colWidths, padding, border, 'center');
     const headerBottom = createGroupBottom(colWidths, padding, border, false);
 
     return headerTop + '\n' + columnHeads + '\n' + headerBottom;
@@ -11,7 +12,7 @@ function createTableHeader(headers, colWidths, padding, border) {
 
 function createGroupHeaderTop(colWidths, padding, border, isHeader) {
     const groupingHeader = colWidths.reduce((acc, curr, index) => {
-        let endPiece = index < colWidths.length - 1 ? border[isHeader ? 'topMiddle' : 'middleFourWay'] : border[isHeader ? 'topRight' : 'vertical'];
+        let endPiece = index < colWidths.length - 1 ? border[isHeader ? 'topMiddle' : 'middleFourWay'] : border[isHeader ? 'topRight' : 'midRight'];
         acc += border['horizontal'].repeat(curr + padding) + endPiece;
         return acc;
     }, isHeader ? border['topLeft'] : border['midLeft']);
@@ -28,9 +29,10 @@ function createGroupBottom(colWidths, padding, border, isTableBottom = true) {
     return bottom;
 }
 
-function createDataRow(array, colWidths, padding, border, align) {
+function createDataRows(array, colWidths, padding, border, align) {
     const columnHeads = array.map(row =>
         colWidths.reduce((acc, curr, index) => {
+            row[index] = row[index] || '';
             let connector = border['vertical'];
             let [left, right] = [];
             let diff = curr + padding - row[index].toString().length;
@@ -48,11 +50,18 @@ function createDataRow(array, colWidths, padding, border, align) {
     return columnHeads;
 }
 
-function prepareTable(array, colWidths, {padding, borderType, align}) {
-    if (!array.length || !colWidths.length) throw new Error('Data not formatted right');
-    let output = createTableHeader(array[0], colWidths, padding, borders[borderType]) + '\n' +
-        createDataRow(array.slice(1), colWidths, padding, borders[borderType], align).join('\n') + '\n' +
-        createGroupBottom(colWidths, padding, borders[borderType], true);
+function prepareTable(array, colWidths, {padding, borderType, align, headers}, dataBuffer) {
+    if (!array.length || !isArray(array) || !colWidths.length) throw new Error('Data not formatted right');
+
+    const border = borders[borderType] || borders['default'];
+    if (headers) {
+        headers.forEach((header, index) => {
+            array[0][index] = header;
+        });
+    }
+    let output = createTableHeader(array[0], colWidths, padding, border) + '\n' +
+        createDataRows(array.slice(1).concat(dataBuffer), colWidths, padding, border, align).join('\n') + '\n' +
+        createGroupBottom(colWidths, padding, border, true);
     return output;
 }
 
