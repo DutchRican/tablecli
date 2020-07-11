@@ -1,6 +1,6 @@
 {
   "name": "@dutchrican/tablecli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple table output for arrays and objects on the cli",
   "main": "index.js",
   "scripts": {
