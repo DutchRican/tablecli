@@ -1,9 +1,8 @@
 const { prepareTable } = require('./table');
 const { isArray } = require('util');
 
-/** {{message: string}}
- * @type {{ padding: number, borderType: 'default|double', align: 'left|center
- * right', headers: 'array overriding object keys', columnInformation: 'not used yet'}}
+/**
+ * @type {{ padding: number, borderType: 'default|double', align: 'left|center|right', headers: 'array of strings overriding object keys', columnInformation: '[color: string, align: string]'}}
  */
 const base_options = {
 	padding: 2,
@@ -13,12 +12,9 @@ const base_options = {
 	columnInformation: undefined
 }
 
-/**
- * 
- * @param {base_options} [options] 
- */
 class TableCli {
-	constructor(options = {}) {
+	/**@param {base_options} [options] */
+	constructor(options) {
 		this.opts = Object.assign(base_options, options);
 		this._data = null;
 		this._dataBuffer = [];
