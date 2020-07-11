@@ -1,5 +1,6 @@
 const assert = require('assert');
 const rewire = require('rewire');
+const chalk = require('chalk');
 const borders = require('../borders.json');
 const { isArray } = require('util');
 
@@ -96,14 +97,14 @@ describe('Table tests', () => {
 
         it('should return a row of data', () => {
             const actual = createDataRows(array, colWidths, padding, border, align);
-           
+
             assert.equal(isArray(actual), true);
             assert.equal(actual.length, array.length);
             assert.equal(actual[0].length, len);
         });
 
         it('should return multiple rows of data all of the same length', () => {
-            const array = [[5,2,5,6],['apple', 'test'],['one', 'two', 'three'],['here']];
+            const array = [[5, 2, 5, 6], ['apple', 'test'], ['one', 'two', 'three'], ['here']];
             const actual = createDataRows(array, colWidths, padding, border, align);
 
             assert.equal(isArray(actual), true);
@@ -116,7 +117,7 @@ describe('Table tests', () => {
         it('should set the center alignment', () => {
             const actual = createDataRows(array, colWidths, padding, border, align);
             const items = actual[0].split(border['vertical']).slice(1, -1);
-            
+
             // centered alignment 
             for (let item of items) {
                 assert.match(item, /^ {2,}\S+ {2,}$/);
@@ -126,8 +127,8 @@ describe('Table tests', () => {
         it('should set the left alignment', () => {
             const actual = createDataRows(array, colWidths, padding, border, 'left');
             const items = actual[0].split(border['vertical']).slice(1, -1);
-            
-            // centered alignment 
+
+            // left alignment 
             for (let item of items) {
                 assert.match(item, /^ {1}\S+ {2,}$/);
             }
@@ -136,17 +137,45 @@ describe('Table tests', () => {
         it('should set the right alignment', () => {
             const actual = createDataRows(array, colWidths, padding, border, 'right');
             const items = actual[0].split(border['vertical']).slice(1, -1);
-            
-            // centered alignment 
+
+            // right alignment 
             for (let item of items) {
                 assert.match(item, /^ {2,}\S+ {1}$/);
             }
+        });
+        it('should use columnInformation to set alignment', () => {
+            const actual = createDataRows(array, colWidths, padding, border, 'right', [{ align: 'left' }]);
+            const items = actual[0].split(border['vertical']).slice(1, -1);
+
+            // centered alignment 
+            
+            for (let i = 0; i < items.length; i++) {
+                if (i === 0) {
+                    assert.match(items[i], /^ {1}\S+ {2,}$/);
+                } else {
+                    assert.match(items[i], /^ {2,}\S+ {1}$/);
+                }
+            }
+        });
+
+        it('should set the color if valid', () => {
+            const color = 'green';
+            const actual = createDataRows(array, colWidths, 0, border, 'right', [{ color }]);
+            const items = actual[0].split(border['vertical']).slice(1, -1);
+            assert.equal(items[0], ` ${chalk[color](array[0][0])} `);
+        });
+        
+        it('should ignore the color if invalid', () => {
+            const color = 'fakecolor';
+            const actual = createDataRows(array, colWidths, 0, border, 'right', [{ color }]);
+            const items = actual[0].split(border['vertical']).slice(1, -1);
+            assert.equal(items[0], ` ${array[0][0]} `);
         });
     });
 
     describe('prepareTable', () => {
         const prepareTable = table.__get__('prepareTable');
-        const array = [['header1', 'header2', 'header3'],['one', 'two', 333]];
+        const array = [['header1', 'header2', 'header3'], ['one', 'two', 333]];
         const headers = [];
         const colWidths = [5, 6, 4];
         const padding = 5;
@@ -154,32 +183,32 @@ describe('Table tests', () => {
         const align = 'center';
 
         it('should throw an error if not formatted right', () => {
-            assert.throws(() => prepareTable('I am not an array am I?', colWidths, {padding, borderType, align, headers }, []));
+            assert.throws(() => prepareTable('I am not an array am I?', colWidths, { padding, borderType, align, headers }, []));
         });
 
         it('should set the default borders if the type is unknown', () => {
             const borderType = 'fish';
-            const actual = prepareTable(array, colWidths, {padding, borderType, align, headers }, []);
-            
+            const actual = prepareTable(array, colWidths, { padding, borderType, align, headers }, []);
+
             assert.match(actual, new RegExp(borders['default']['middleFourWay']));
         });
-        
+
         it('should set the selected borders if the type is known', () => {
             const borderType = 'double';
-            const actual = prepareTable(array, colWidths, {padding, borderType, align, headers }, []);
-            
+            const actual = prepareTable(array, colWidths, { padding, borderType, align, headers }, []);
+
             assert.match(actual, new RegExp(borders['double']['middleFourWay']));
         });
 
         it('should render the first row in the array as headers', () => {
-            const actual = prepareTable(array, colWidths, {padding, borderType, align, headers }, []);
+            const actual = prepareTable(array, colWidths, { padding, borderType, align, headers }, []);
 
             assert.match(actual, /│ header1  │  header2  │ header3 │\n/)
         });
 
         it('should render override headers', () => {
             const headers = ['new1', 'new2'];
-            const actual = prepareTable(array, colWidths, {padding, borderType, align, headers }, []);
+            const actual = prepareTable(array, colWidths, { padding, borderType, align, headers }, []);
 
             assert.match(actual, /│   new1   │   new2    │ header3 │\n/)
         });
