@@ -18,23 +18,23 @@ const base_options = {
  */
 class TableCli {
 	constructor(options = {}) {
-	this.opts = Object.assign(base_options, options);
-	this._data = null;
-	this._dataBuffer = [];
+		this.opts = Object.assign(base_options, options);
+		this._data = null;
+		this._dataBuffer = [];
 
-	// making sure it won't look completely weird
-	if (this.opts.padding < 2) this.opts.padding = 2;
+		// making sure it won't look completely weird
+		if (this.opts.padding < 2) this.opts.padding = 2;
 	}
 
 	setData(data) {
 		this._data = data;
 	}
-	
+
 	addRow(row) {
 		if (!Array.isArray(row)) throw new Error('row needs to be of type array!');
 		this._dataBuffer.push(row);
 	}
-	
+
 	/**
 	 * Prints out the table as returned by this.getTableString
 	 */
@@ -42,7 +42,7 @@ class TableCli {
 		const table = this.getTableString();
 		console.log(table);
 	}
-	
+
 	/**
 	 * Returns the table as a string for further manipulation.
 	 */
@@ -98,25 +98,4 @@ function getColumnWidths(array = []) {
 	return colWidths;
 }
 
-
-
 module.exports.TableCli = TableCli;
-
-// const mockArray = [
-// 	['items', 'prices', 'animal', 'cars', 'flabbergasters'],
-// 	[3, '$2343.00', 'giraffe', 'Audi', 'Justin Flabber'],
-// 	[13, '$12.50', 'Rhinoceros', 'Lamborghini', 'John']
-// ];
-
-// const mockObject = {
-// 	items: [3, 13, 34],
-// 	prices: ['$2343.00', '$12.50', '$234'],
-// 	animal: ['giraffe', 'Rhinoceros', 'ape'],
-// 	cars: ['Audi', 'Lamborghini'],
-// 	flabbergasters: ['Justin Flabber', 'John', 'Henry']
-// }
-// const Table = new TableCli({ align: 'right', padding: 10, borderType: 'double', headers: ['one', 'too'] });
-// Table.setData(mockArray)
-// Table.addRow([55,'$23432', 'Siverback', 'Ford', 'Oscar', 'too many!']);
-// Table.addRow([1,'$.22', 'Hedgehog', 'Buick']);
-// Table.showTable();
