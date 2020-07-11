@@ -1,4 +1,5 @@
 const { prepareTable } = require('./table');
+const { isArray } = require('util');
 
 /** {{message: string}}
  * @type {{ padding: number, borderType: 'default|double', align: 'left|center
@@ -48,8 +49,11 @@ class TableCli {
 	 */
 	getTableString() {
 		let dataArray;
-		if (!Array.isArray(this._data)) {
+		if (!isArray(this._data)) {
 			dataArray = objectToArray(this._data);
+		} 
+		if (isArray(this._data) && this._data.length && typeof this._data[0] === 'object' && !isArray(this._data[0])) {
+			dataArray = arrayOfObjectsToArray(this._data);
 		}
 		const colWidths = getColumnWidths(dataArray || this._data);
 		try {
@@ -83,6 +87,16 @@ function objectToArray(obj) {
 	return sortedColumns;
 }
 
+function arrayOfObjectsToArray(list) {
+	const res = list.reduce((acc, curr) => {
+		Object.entries(curr).forEach(([key, val]) => {
+			acc[key] ? acc[key].push(val) : acc[key] = [val];
+		});
+		return acc;
+	}, {});
+	return objectToArray(res);
+}
+
 function getColumnWidths(array = []) {
 	const colWidths = array.reduce((acc, curr) => {
 		curr.forEach((group, index) => {
@@ -99,3 +113,33 @@ function getColumnWidths(array = []) {
 }
 
 module.exports.TableCli = TableCli;
+
+const mockObject = [{
+	items: 3,
+	prices: '$2343.00',
+	animal: 'giraffe',
+	cars: 'Audi',
+	flabbergasters: 'Justin Flabber',
+},{
+	items: 13,
+	prices: '$12.50',
+	animal: 'Rhinoceros',
+	cars: 'Lamborghini',
+	flabbergasters: 'John'
+}]
+
+const otherObj = {
+	items: [3, 13],
+	prices: ['$2343.00', '$12.50'],
+	animal: ['giraffe', 'Rhinoceros'],
+	cars: ['Audi', 'Lamborghini'],
+	flabbergasters: ['Justin Flabber', 'John']
+}
+const mockArray = [
+	['items', 'prices', 'animal', 'cars', 'flabbergasters'],
+	[3, '$2343.00', 'giraffe', 'Audi', 'Justin Flabber'],
+	[13, '$12.50', 'Rhinoceros', 'Lamborghini', 'John']
+];
+const table = new TableCli();
+table.setData(mockObject);
+table.showTable();

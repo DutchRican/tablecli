@@ -1,7 +1,11 @@
 {
   "name": "@dutchrican/tablecli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple table output for arrays and objects on the cli",
+  "repository": {
+    "url": "https://github.com/DutchRican/tablecli.git",
+    "type": "git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "mocha"
