@@ -113,33 +113,3 @@ function getColumnWidths(array = []) {
 }
 
 module.exports.TableCli = TableCli;
-
-const mockObject = [{
-	items: 3,
-	prices: '$2343.00',
-	animal: 'giraffe',
-	cars: 'Audi',
-	flabbergasters: 'Justin Flabber',
-},{
-	items: 13,
-	prices: '$12.50',
-	animal: 'Rhinoceros',
-	cars: 'Lamborghini',
-	flabbergasters: 'John'
-}]
-
-const otherObj = {
-	items: [3, 13],
-	prices: ['$2343.00', '$12.50'],
-	animal: ['giraffe', 'Rhinoceros'],
-	cars: ['Audi', 'Lamborghini'],
-	flabbergasters: ['Justin Flabber', 'John']
-}
-const mockArray = [
-	['items', 'prices', 'animal', 'cars', 'flabbergasters'],
-	[3, '$2343.00', 'giraffe', 'Audi', 'Justin Flabber'],
-	[13, '$12.50', 'Rhinoceros', 'Lamborghini', 'John']
-];
-const table = new TableCli();
-table.setData(mockObject);
-table.showTable();
