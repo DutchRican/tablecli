@@ -1,5 +1,4 @@
 const { prepareTable } = require('./table');
-const { isArray } = require('util');
 
 /**
  * @type {{ padding: number, borderType: 'default|double', align: 'left|center|right', headers: 'array of strings overriding object keys', columnInformation: '[color: string, align: string]'}}
@@ -45,10 +44,10 @@ class TableCli {
 	 */
 	getTableString() {
 		let dataArray;
-		if (!isArray(this._data)) {
+		if (!Array.isArray(this._data)) {
 			dataArray = objectToArray(this._data);
-		} 
-		if (isArray(this._data) && this._data.length && typeof this._data[0] === 'object' && !isArray(this._data[0])) {
+		}
+		if (Array.isArray(this._data) && this._data.length && typeof this._data[0] === 'object' && !Array.isArray(this._data[0])) {
 			dataArray = arrayOfObjectsToArray(this._data);
 		}
 		const colWidths = getColumnWidths(dataArray || this._data);

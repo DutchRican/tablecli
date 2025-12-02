@@ -1,4 +1,3 @@
-const { isArray } = require('util');
 const chalk = require('chalk');
 const borders = require('./borders.json');
 
@@ -65,7 +64,7 @@ function createDataRows(array, colWidths, padding, border, align, columnInformat
 }
 
 function prepareTable(array, colWidths, { padding, borderType, align, headers, columnInformation, title }, dataBuffer) {
-    if (!array.length || !isArray(array) || !colWidths.length) throw new Error('Data not formatted right');
+    if (!array.length || !Array.isArray(array) || !colWidths.length) throw new Error('Data not formatted right');
 
     const border = borders[borderType] || borders['default'];
     if (headers) {
@@ -73,12 +72,12 @@ function prepareTable(array, colWidths, { padding, borderType, align, headers, c
             array[0][index] = header;
         });
     }
-    
+
     let output = createTableHeader(array[0], colWidths, padding, border) + '\n' +
         createDataRows(array.slice(1).concat(dataBuffer), colWidths, padding, border, align, columnInformation).join('\n') + '\n' +
         createGroupBottom(colWidths, padding, border, true);
-        const tableTitle = title && paddText(...getLeftRightPadding(output.split('\n')[0].length, 0, title.length, 'center'), title);
-    return tableTitle ?  tableTitle + '\n' + output : output;
+    const tableTitle = title && paddText(...getLeftRightPadding(output.split('\n')[0].length, 0, title.length, 'center'), title);
+    return tableTitle ? tableTitle + '\n' + output : output;
 }
 
 module.exports.prepareTable = prepareTable;

@@ -2,7 +2,6 @@ const assert = require('assert');
 const rewire = require('rewire');
 const chalk = require('chalk');
 const borders = require('../borders.json');
-const { isArray } = require('util');
 
 const table = rewire('../table.js');
 
@@ -98,7 +97,7 @@ describe('Table tests', () => {
         it('should return a row of data', () => {
             const actual = createDataRows(array, colWidths, padding, border, align);
 
-            assert.equal(isArray(actual), true);
+            assert.equal(Array.isArray(actual), true);
             assert.equal(actual.length, array.length);
             assert.equal(actual[0].length, len);
         });
@@ -107,7 +106,7 @@ describe('Table tests', () => {
             const array = [[5, 2, 5, 6], ['apple', 'test'], ['one', 'two', 'three'], ['here']];
             const actual = createDataRows(array, colWidths, padding, border, align);
 
-            assert.equal(isArray(actual), true);
+            assert.equal(Array.isArray(actual), true);
             assert.equal(actual.length, array.length);
             for (let row of actual) {
                 assert.equal(row.length, len);
@@ -148,7 +147,7 @@ describe('Table tests', () => {
             const items = actual[0].split(border['vertical']).slice(1, -1);
 
             // centered alignment 
-            
+
             for (let i = 0; i < items.length; i++) {
                 if (i === 0) {
                     assert.match(items[i], /^ {1}\S+ {2,}$/);
@@ -164,7 +163,7 @@ describe('Table tests', () => {
             const items = actual[0].split(border['vertical']).slice(1, -1);
             assert.equal(items[0], ` ${chalk[color](array[0][0])} `);
         });
-        
+
         it('should ignore the color if invalid', () => {
             const color = 'fakecolor';
             const actual = createDataRows(array, colWidths, 0, border, 'right', [{ color }]);
